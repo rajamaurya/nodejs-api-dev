@@ -10,6 +10,25 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
   let content = JSON.parse(dataRead);
 
   if (content) {
+    // check if sort is required
+    if (req.query.sort) {
+      let sortBy = req.query.sort;
+      content = content.sort((user1, user2) =>
+        user1[sortBy] > user2[sortBy] ? 1 : -1
+      );
+    }
+    // check if selection is there
+    if (req.query.select) {
+      let selectedItems = req.query.select.split(",");
+      content = content.map((user) => {
+        let temp = {};
+        selectedItems.forEach((selection) => {
+          temp[selection] = user[selection];
+        });
+        user = temp;
+        return user;
+      });
+    }
     return res.status(200).json({
       success: true,
       count: content.length,
@@ -64,10 +83,11 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
   const dataRead = await fs.readFile("post.json", "utf-8");
   let records = JSON.parse(dataRead);
 
-  records.forEach((record) => {
+  records.forEach((record, index, arr) => {
     if (record.id == req.params.id) {
-      const { name } = req.body;
-      record.name = name;
+      // const { name, roel } = req.body;
+      record = { ...record, ...req.body };
+      arr[index] = record; // it will actually include the other fields in record object
     }
   });
   if (records) {

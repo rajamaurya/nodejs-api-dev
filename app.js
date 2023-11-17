@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const dotenv = require("dotenv").config();
 const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
@@ -11,7 +12,11 @@ const ErrorHandler = require("./utils/errorHandler");
 const storeLogtoFile = fs.createWriteStream(path.join(__dirname, "appLogs"), {
   flags: "a",
 });
-app.use(morgan("combined", { stream: storeLogtoFile }));
+
+if (process.env.NODE_ENV == "DEV") {
+  app.use(morgan("combined", { stream: storeLogtoFile }));
+}
+
 app.locals.baseUrl = constant.BASE_URL;
 
 app.use(bodyParser.json());
