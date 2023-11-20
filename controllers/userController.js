@@ -2,6 +2,7 @@ const fs = require("fs/promises");
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../utils/async");
 const { stringify } = require("../utils/helper");
+const colors = require("colors");
 
 // get users list
 
@@ -29,11 +30,37 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
         return user;
       });
     }
+    // pagination handling..
+    let page = parseInt(req.query.page) || 1;
+
+    let total = content.length;
+    let skip = Math.ceil(total / 10);
+    let limit = parseInt(req.query.limit) || 5;
+
+    let startIndex = (page - 1) * limit;
+    let endIndex = page * limit;
+
+    let pagination = {
+      prev: null,
+      next: null,
+      currentPage: null,
+    };
+    pagination.currentPage = (endIndex - startIndex) * skip;
+    if (endIndex > total) {
+      page = page - 1;
+      pagination.prev = page;
+    }
+    if (startIndex >= 0) {
+      page = page + 1;
+      pagination.next = page;
+    }
+
     return res.status(200).json({
       success: true,
       count: content.length,
-      data: content,
+      data: content.slice(pagination.currentPage),
       msg: `users fetched`,
+      pagination,
     });
   }
   next(new ErrorResponse("Bad request. Please try again..", 400));
