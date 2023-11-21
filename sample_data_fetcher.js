@@ -8,16 +8,14 @@ const readLine = require("readline/promises").createInterface({
 });
 dotenv.config({ path: "./.env" });
 // load sample posts data
-let isLoaded = false;
 const load_sample_data = async (url, toFile) => {
   try {
     const resp = await axios.get(url);
 
     //write posts to a file
     if (resp) {
-      isLoaded = true;
       await fs.writeFile(toFile, JSON.stringify(resp.data), "utf-8");
-      isLoaded = false;
+      return resp.data;
     }
   } catch (err) {
     console.log("there is some problem in loading posts data".red, err.message);
@@ -26,13 +24,17 @@ const load_sample_data = async (url, toFile) => {
 };
 
 if (process.argv[2] == "-i") {
-  load_sample_data(process.env.SAMPLE_POSTS_URL, "posts.json");
-  load_sample_data(process.env.SAMPLE_USERS_URL, "users.json");
+  (async () => {
+    const [posts, users] = await Promise.all([
+      load_sample_data(process.env.SAMPLE_POSTS_URL, "posts.json"),
+      load_sample_data(process.env.SAMPLE_USERS_URL, "users.json"),
+    ]);
 
-  if (isLoaded) {
-    console.log("sample posts and users data have been imported".bgYellow);
+    if (posts && users) {
+      console.log("sample posts and users data have been imported".bgYellow);
+    }
     process.exit();
-  }
+  })();
 }
 
 if (process.argv[2] == "-d") {
@@ -40,6 +42,8 @@ if (process.argv[2] == "-d") {
     const executeDelete = async () => {
       try {
         await fs.unlink("posts.json");
+        await fs.unlink("users.json");
+        console.info("File has been deleted".bgGreen);
       } catch (err) {
         if (err && err.code == "ENOENT") {
           console.info("File doesn't exist, won't remove it.".red);
