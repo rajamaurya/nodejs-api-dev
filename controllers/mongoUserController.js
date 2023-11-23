@@ -26,35 +26,32 @@ exports.getMongoUsers = asyncHandler(async (req, res, next) => {
     // pagination handling..
     let page = parseInt(req.query.page) || 1;
 
-    let total = Math.ceil(await User.countDocuments(query));
+    let total = await User.countDocuments(query);
     let limit = parseInt(req.query.limit) || 5;
 
-    let skip = (page - 1) * limit;
-    let endIndex = page * limit;
-    let startIndex = 1;
+    let endIndex = page * limit; // 5
+    let startIndex = (page - 1) * limit; // 0, 5, 11
 
     let pagination = {
       prev: null,
       next: null,
-      offset: null,
+      page,
     };
-    pagination.offset = (endIndex - startIndex) * skip;
-    if (endIndex > total) {
+    if (endIndex < total) {
+      page = page + 1;
+      pagination.next = page;
+    } else if (startIndex > 0) {
       page = page - 1;
       pagination.prev = page;
     }
-    if (startIndex >= 0) {
-      page = page + 1;
-      pagination.next = page;
-    }
 
-    query = await query.skip(skip).limit(limit);
+    query = await query.skip(startIndex).limit(limit);
 
     return res.status(200).json({
       success: true,
       count: query.length,
       data: query,
-      msg: `users fetched`,
+      msg: `paginated response`,
       pagination,
     });
   }
