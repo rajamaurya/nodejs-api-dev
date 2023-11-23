@@ -65,7 +65,7 @@ if (process.argv[2] == "-d") {
         user_data = await readLine.question(
           "Please enter 'y' || 'Y', if you want to delete:"
         );
-      } while (user_data !== "y");
+      } while (user_data.toLowerCase() !== "y");
       await executeDelete();
 
       readLine.close();
