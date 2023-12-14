@@ -1,9 +1,8 @@
-const { bgRed } = require("colors");
 const mongoose = require("mongoose");
-const config = require("dotenv").config();
+const { url } = require("./config");
 const connectDb = async () => {
   try {
-    await mongoose.connect(process.env.DB_CONNECT_URL, {
+    await mongoose.connect(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
