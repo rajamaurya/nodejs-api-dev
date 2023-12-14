@@ -11,13 +11,13 @@ on:
 
 jobs:
   build:
-    runs-on: [windows-latest, ubuntu-latest]
+    runs-on: [windows-latest]
 
     strategy:
       matrix:
         node-version: [14.x]
         mongodb-version: ["4.2", "4.4", "5.0", "6.0"]
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -30,7 +30,7 @@ jobs:
           cache-dependency-path: "**/package-lock.json"
 
       - name: Start MongoDB
-        uses: MongoCamp/mongodb-github-action@1.0.0
+        uses: supercharge/mongodb-github-action@1.10.0
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
           mongodb-port: 27017
