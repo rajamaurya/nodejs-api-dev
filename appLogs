@@ -340,3 +340,4 @@
 ::1 - - [23/Nov/2023:22:38:43 +0000] "GET /api/v1/mongo-users?sort=-name,username&select=name,username&page=5&limit=1 HTTP/1.1" 200 173 "-" "PostmanRuntime/7.28.1"
 ::1 - - [23/Nov/2023:22:41:01 +0000] "GET /api/v1/mongo-users?sort=-name,username&select=name,username&page=1&limit=5 HTTP/1.1" 200 455 "-" "PostmanRuntime/7.28.1"
 ::1 - - [23/Nov/2023:22:41:11 +0000] "GET /api/v1/mongo-users?sort=-name,username&select=name,username&page=2&limit=5 HTTP/1.1" 200 188 "-" "PostmanRuntime/7.28.1"
+::1 - - [27/Nov/2023:18:42:56 +0000] "GET /api/v1/mongo-users HTTP/1.1" 200 2257 "-" "PostmanRuntime/7.28.1"
